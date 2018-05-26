@@ -1,5 +1,6 @@
+var util = require('util')
 var vm = require('vm');
-var requestModule = require('request');
+var requestModule = require('requestretry')
 var jar = requestModule.jar();
 
 var request      = requestModule.defaults({jar: jar}), // Cookies should be enabled
@@ -13,13 +14,13 @@ var request      = requestModule.defaults({jar: jar}), // Cookies should be enab
  * @param  {Function}  callback    function(error, response, body) {}
  * @param  {Object}    headers     Hash with headers, e.g. {'Referer': 'http://google.com', 'User-Agent': '...'}
  */
-cloudscraper.get = function(url, callback, headers) {
+cloudscraper.get = util.promisify(function(url, callback, headers) {
   performRequest({
     method: 'GET',
     url: url,
     headers: headers
   }, callback);
-};
+})
 
 /**
  * Performs post request to url with headers.
@@ -28,7 +29,7 @@ cloudscraper.get = function(url, callback, headers) {
  * @param  {Function}      callback    function(error, response, body) {}
  * @param  {Object}        headers     Hash with headers, e.g. {'Referer': 'http://google.com', 'User-Agent': '...'}
  */
-cloudscraper.post = function(url, body, callback, headers) {
+cloudscraper.post = util.promisify(function(url, body, callback, headers) {
   var data = '',
       bodyType = Object.prototype.toString.call(body);
 
@@ -50,7 +51,7 @@ cloudscraper.post = function(url, body, callback, headers) {
     url: url,
     headers: headers
   }, callback);
-}
+})
 
 /**
  * Performs get or post request with generic request options
